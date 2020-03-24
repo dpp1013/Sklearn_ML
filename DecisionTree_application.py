@@ -7,14 +7,23 @@ tree.DecisionTreeClassifier
 '''
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier
+# 导入计算交叉验证值的函数cross_val_score
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 if __name__ == '__main__':
     iris = load_iris()
-    x_train, y_train, x_text, y_text = train_test_split(iris, iris.target, test_size=0.3)
-    tree = DecisionTreeClassifier(criterion='gini', max_features=30)
+    x_train, x_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.3)
+    print(x_train.shape)
+    print(y_train.shape)
+    print(x_test.shape)
+    print(y_test.shape)
+    tree = DecisionTreeClassifier(criterion='gini')
+    # print(cross_val_score(tree, iris.data, iris.target, cv=10))
     tree.fit(x_train, y_train)
-    predict_target = tree.predict(x_text)
-    print(sum(predict_target == y_text))
-
+    y_predict = tree.predict(x_test)
+    accuracy = accuracy_score(y_test, y_predict, normalize=True, sample_weight=None)
+    print(confusion_matrix(y_test, y_predict, labels=None, sample_weight=None))
+    print(accuracy)
+    # print(tree.predict(x_test, y_test))
