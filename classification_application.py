@@ -10,6 +10,22 @@ from sklearn import preprocessing
 from sklearn import metrics
 
 
+# 用pandas进行文件操作
+def load_data_pd(feature_path, target_path):
+    feature = np.ndarray(shape=(0, 41))
+    label = np.ndarray(shape=(0, 1))
+    df = pd.read_table(feature_path, delimiter=',', na_values='?', header=None)
+    imp = sklearn.impute.SimpleImputer(missing_values=np.nan, strategy='mean')
+    df = imp.fit_transform(df)
+    feature = np.concatenate((feature, df))
+    df1 = pd.read_table(target_path, delimiter=',', header=None)
+    label = np.concatenate((label, df1))
+    print(feature.shape)
+    print(label.shape)
+    return feature, label
+
+
+# 用numpy 进行文件操作
 def load_data(feature_path, target_path):
     '''
     :return:
@@ -63,9 +79,11 @@ estimation = [
 if __name__ == '__main__':
     feature_path = r'D:\备份\undergraduate\sklearn学习\分类\dataset\A\A.feature'
     target_path = r'D:\备份\undergraduate\sklearn学习\分类\dataset\A\A.label'
-    X, Y = load_data(feature_path, target_path)
+    X, Y = load_data_pd(feature_path, target_path)
+
+    # X, Y = load_data(feature_path, target_path)
     X = preprocess(X)
-    X_train, X_text, Y_train, Y_test = train_test_split(X, Y, train_size=70, shuffle=True)
+    X_train, X_text, Y_train, Y_test = train_test_split(X, Y, train_size=7/10, shuffle=True)
     print(X_train.shape)
     print(X_text.shape)
     print(Y_train.shape)
@@ -81,3 +99,4 @@ if __name__ == '__main__':
         print('宏平均精度：', metrics.precision_score(Y_test, y_pred, average='macro'))
         print('微平均召回率:', metrics.recall_score(Y_test, y_pred, average='micro'))
         print('加权平均F1得分:', metrics.f1_score(Y_test, y_pred, average='weighted'))
+
